@@ -1,62 +1,41 @@
 import React from "react";
 
-// Untitled UI SVG icons (inline for demo)
-const SidebarIcons = [
-  // Home/Logo
-  <svg key="logo" width="32" height="32" fill="none" viewBox="0 0 32 32"><circle cx="16" cy="16" r="16" fill="#fff"/><path d="M16 7l5.5 9.5H10.5L16 7zm0 2.236L12.202 15h7.596L16 9.236zM10 18h12v2H10v-2z" fill="#44743A"/></svg>,
-  // Challenges
-  <svg key="challenge" width="24" height="24" fill="none" viewBox="0 0 24 24"><rect width="24" height="24" rx="6" fill="#44743A"/><path d="M8 12h8M12 8v8" stroke="#fff" strokeWidth="2" strokeLinecap="round"/></svg>,
-  // Table/Stats
-  <svg key="stats" width="24" height="24" fill="none" viewBox="0 0 24 24"><rect width="24" height="24" rx="6" fill="#44743A"/><path d="M7 17V7m5 10V7m5 10V7" stroke="#fff" strokeWidth="2" strokeLinecap="round"/></svg>,
-  // Calendar
-  <svg key="calendar" width="24" height="24" fill="none" viewBox="0 0 24 24"><rect width="24" height="24" rx="6" fill="#44743A"/><rect x="6" y="8" width="12" height="10" rx="2" fill="#fff"/><path d="M8 6v2m8-2v2" stroke="#44743A" strokeWidth="2" strokeLinecap="round"/></svg>,
-  // Users
-  <svg key="users" width="24" height="24" fill="none" viewBox="0 0 24 24"><rect width="24" height="24" rx="6" fill="#44743A"/><circle cx="12" cy="10" r="3" fill="#fff"/><path d="M7 18v-1a5 5 0 0110 0v1" stroke="#fff" strokeWidth="2"/></svg>,
-  // Feedback
-  <svg key="feedback" width="24" height="24" fill="none" viewBox="0 0 24 24"><rect width="24" height="24" rx="6" fill="#44743A"/><path d="M8 10h8M8 14h5" stroke="#fff" strokeWidth="2" strokeLinecap="round"/><circle cx="12" cy="12" r="10" stroke="#44743A" strokeWidth="2"/></svg>,
-  // Logout
-  <svg key="logout" width="24" height="24" fill="none" viewBox="0 0 24 24"><rect width="24" height="24" rx="6" fill="#44743A"/><path d="M16 12H8m0 0l3-3m-3 3l3 3" stroke="#fff" strokeWidth="2" strokeLinecap="round"/></svg>,
-];
-
 export default function Home() {
   return (
-    <div className="flex min-h-screen bg-[#F6F6F6]">
+    <div className="flex min-h-screen bg-[#F6F6F6] min-w-[1200px]">
+
       {/* Sidebar */}
-      <aside className="w-20 bg-[#44743A] flex flex-col items-center py-8 gap-8 rounded-tr-3xl rounded-br-3xl">
-        <div className="mb-8">{SidebarIcons[0]}</div>
-        <nav className="flex flex-col gap-8 flex-1">
-          {SidebarIcons.slice(1, 6).map((icon, i) => (
-            <button key={i} className="p-2 rounded-lg hover:bg-[#5A8C4A] transition-colors">{icon}</button>
-          ))}
-        </nav>
-        <div className="mt-auto mb-2">{SidebarIcons[6]}</div>
+      <aside className="w-20 bg-[#44743A] rounded-tr-3xl rounded-br-3xl min-h-screen">
       </aside>
+
       {/* Main Content */}
-      <main className="flex-1 p-10 flex flex-col gap-8">
+      <main className="flex-1 p-10 flex flex-col gap-8 w-[90vw]">
+
         {/* Header */}
-        <div className="flex justify-between items-center">
-          <h1 className="text-3xl font-bold">Dashboard</h1>
-          <div className="flex items-center gap-2 text-[#222]">
+        <div className="flex justify-between items-center w-full">
+          <h1 className="text-black text-3xl font-bold">Dashboard</h1>
+          <div className="flex items-center gap-2 text-black">
             <span>Welkom, Marijn</span>
             <span className="w-8 h-8 rounded-full bg-gray-300 inline-block" />
           </div>
         </div>
+
         {/* Stats & Ranking */}
-        <div className="grid grid-cols-1 xl:grid-cols-[2fr_1fr] gap-8">
-          {/* Left: Stats, Sponsors, Feedback */}
-          <div className="flex flex-col gap-8">
+        <div className="text-black flex flex-row gap-8 w-full min-w-[1000px]">
+          {/* Left: Stats, Sponsors, Feedback (70vw) */}
+          <div className="flex flex-col gap-8 w-[70vw] min-w-[700px] max-w-[1100px]">
             {/* Algemene Statistieken */}
-            <section>
+            <section className="w-full">
               <h2 className="text-lg font-semibold mb-4">Algemene Statistieken</h2>
-              <div className="flex flex-wrap gap-6 items-stretch">
+              <div className="flex flex-wrap gap-6 items-stretch w-full">
                 {/* Nieuwe Challenges */}
-                <div className="bg-[#44743A] text-white rounded-2xl p-8 flex flex-col justify-between min-w-[220px] min-h-[140px] flex-1">
+                <div className="bg-[#44743A] text-white rounded-2xl p-8 flex flex-col justify-between min-w-[220px] min-h-[140px] flex-1 w-full">
                   <span className="text-lg mb-2">Nieuwe Challenges</span>
                   <span className="text-5xl font-bold leading-none">10</span>
                   <span className="text-xs mt-2">Challenges wachtend op goedkeuring</span>
                 </div>
                 {/* Nieuwe Gebruikers */}
-                <div className="bg-white rounded-2xl p-8 flex flex-col justify-between min-w-[220px] min-h-[140px] flex-1 shadow-sm">
+                <div className="bg-white rounded-2xl p-8 flex flex-col justify-between min-w-[220px] min-h-[140px] flex-1 shadow-sm w-full">
                   <span className="text-lg mb-2 text-[#222]">Nieuwe Gebruikers</span>
                   <span className="text-5xl font-bold text-[#222] leading-none">37</span>
                   <span className="text-xs mt-2 text-[#888]">Nieuwe gebruikers deze week</span>
@@ -64,18 +43,18 @@ export default function Home() {
               </div>
             </section>
             {/* Sponsors */}
-            <section>
+            <section className="w-full">
               <h2 className="text-lg font-semibold mb-4">Uitgelichte Sponsors</h2>
-              <div className="flex gap-4">
-                <button className="bg-[#44743A] text-white rounded-full px-8 py-2 font-medium">Mercure Hotel</button>
-                <button className="bg-white text-[#222] rounded-full px-8 py-2 font-medium border border-[#eee]">Albert Heijn</button>
-                <button className="bg-white text-[#222] rounded-full px-8 py-2 font-medium border border-[#eee]">Van Bastianen</button>
+              <div className="flex gap-4 w-full">
+                <button className="bg-[#44743A] text-white rounded-full px-8 py-2 font-medium w-full max-w-[200px]">Mercure Hotel</button>
+                <button className="bg-white text-[#222] rounded-full px-8 py-2 font-medium border border-[#eee] w-full max-w-[200px]">Albert Heijn</button>
+                <button className="bg-white text-[#222] rounded-full px-8 py-2 font-medium border border-[#eee] w-full max-w-[200px]">Van Bastianen</button>
               </div>
             </section>
             {/* Feedback */}
-            <section>
+            <section className="w-full">
               <h2 className="text-lg font-semibold mb-4">Feedback</h2>
-              <div className="bg-white rounded-2xl p-6 shadow-sm">
+              <div className="bg-white rounded-2xl p-6 shadow-sm w-full">
                 <table className="w-full text-left">
                   <thead>
                     <tr className="text-[#888] text-sm">
@@ -100,10 +79,10 @@ export default function Home() {
               </div>
             </section>
           </div>
-          {/* Right: Ranking & Events */}
-          <div className="flex flex-col gap-8">
+          {/* Right: Ranking & Events (30vw) */}
+          <div className="flex flex-col gap-8 w-[30vw] min-w-[320px] max-w-[500px]">
             {/* Wijk Ranking */}
-            <section className="bg-white rounded-2xl p-6 shadow-sm">
+            <section className="bg-white rounded-2xl p-6 shadow-sm w-full">
               <h2 className="text-lg font-semibold mb-4">Wijk Ranking</h2>
               <ul className="flex flex-col gap-3">
                 {[
@@ -130,7 +109,7 @@ export default function Home() {
               </ul>
             </section>
             {/* Opkomende Evenementen */}
-            <section className="bg-white rounded-2xl p-6 shadow-sm">
+            <section className="bg-white rounded-2xl p-6 shadow-sm w-full">
               <h2 className="text-lg font-semibold mb-4">Opkomende Evenementen</h2>
               <ul className="flex flex-col gap-2">
                 {[
