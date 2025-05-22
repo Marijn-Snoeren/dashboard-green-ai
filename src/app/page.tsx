@@ -36,9 +36,9 @@ export default function Home() {
                 </div>
                 {/* Nieuwe Gebruikers */}
                 <div className="bg-white rounded-2xl p-8 flex flex-col justify-between min-w-[220px] min-h-[140px] flex-1 shadow-sm w-full">
-                  <span className="text-lg mb-2 text-[#222]">Nieuwe Gebruikers</span>
-                  <span className="text-5xl font-bold text-[#222] leading-none">37</span>
-                  <span className="text-xs mt-2 text-[#888]">Nieuwe gebruikers deze week</span>
+                  <span className="text-lg mb-2 text-black">Nieuwe Gebruikers</span>
+                  <span className="text-5xl font-bold text-black leading-none">37</span>
+                  <span className="text-xs mt-2 text-black">Nieuwe gebruikers deze week</span>
                 </div>
               </div>
             </section>
@@ -47,8 +47,8 @@ export default function Home() {
               <h2 className="text-lg font-semibold mb-4">Uitgelichte Sponsors</h2>
               <div className="flex gap-4 w-full">
                 <button className="bg-[#44743A] text-white rounded-full px-8 py-2 font-medium w-full max-w-[200px]">Mercure Hotel</button>
-                <button className="bg-white text-[#222] rounded-full px-8 py-2 font-medium border border-[#eee] w-full max-w-[200px]">Albert Heijn</button>
-                <button className="bg-white text-[#222] rounded-full px-8 py-2 font-medium border border-[#eee] w-full max-w-[200px]">Van Bastianen</button>
+                <button className="bg-white text-black rounded-full px-8 py-2 font-medium border border-[#eee] w-full max-w-[200px]">Albert Heijn</button>
+                <button className="bg-white text-black rounded-full px-8 py-2 font-medium border border-[#eee] w-full max-w-[200px]">Van Bastianen</button>
               </div>
             </section>
             {/* Feedback */}
@@ -71,7 +71,7 @@ export default function Home() {
                           Lars Vermeulen
                         </td>
                         <td className="py-3">15 Mei, 2025</td>
-                        <td className="py-3"><span className="bg-[#eee] text-[#222] px-3 py-1 rounded-full text-xs">To Do</span></td>
+                        <td className="py-3"><span className="bg-[#eee] text-black px-3 py-1 rounded-full text-xs">To Do</span></td>
                       </tr>
                     ))}
                   </tbody>
@@ -96,7 +96,7 @@ export default function Home() {
                 ].map((item, i) => (
                   <li key={i} className="flex items-center gap-3">
                     <span className="bg-[#44743A] rounded-lg p-2">
-                      <svg width="20" height="20" fill="none" viewBox="0 0 24 24"><rect width="20" height="20" rx="6" fill="#fff"/><path d="M6 12l4-4 4 4" stroke="#44743A" strokeWidth="2" strokeLinecap="round"/></svg>
+                      <svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path d="M6 12l4-4 4 4" stroke="#44743A" strokeWidth="2" strokeLinecap="round"/></svg>
                     </span>
                     <span className="flex-1">{item.name}</span>
                     {item.up ? (
