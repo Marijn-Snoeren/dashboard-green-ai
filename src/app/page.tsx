@@ -5,7 +5,14 @@ export default function Home() {
     <div className="flex min-h-screen bg-[#F6F6F6] min-w-[1200px]">
 
       {/* Sidebar */}
-      <aside className="w-20 bg-[#44743A] rounded-tr-3xl rounded-br-3xl min-h-screen">
+      <aside className="w-20 bg-[#44743A] rounded-tr-3xl rounded-br-3xl min-h-screen flex flex-col items-center justify-center">
+        <nav className="flex flex-col gap-8">
+          {[1, 2, 3, 4, 5].map((item) => (
+            <button key={item} className="p-2 rounded-lg hover:bg-[#5A8C4A] transition-colors">
+              <svg width="24" height="24" fill="none" viewBox="0 0 24 24"><rect width="24" height="24" rx="6" fill="#fff"/></svg>
+            </button>
+          ))}
+        </nav>
       </aside>
 
       {/* Main Content */}
