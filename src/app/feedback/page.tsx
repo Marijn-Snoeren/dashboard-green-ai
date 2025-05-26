@@ -18,14 +18,14 @@ export default function FeedbackPage() {
             <div className="bg-white rounded-2xl p-4 mb-4 flex items-center gap-4">
               <span className="w-8 h-8 rounded-full bg-[#44743A] inline-block" />
               <span className="font-semibold">Lars Vermeulen</span>
-              <span className="ml-auto text-gray-500">15 Mei, 2025</span>
+              <span className="ml-auto">15 Mei, 2025</span>
               <span className="bg-green-500 text-white rounded-full px-3 py-1 text-xs">Positief</span>
             </div>
             <div className="bg-white rounded-2xl p-4 mb-4">
               <div className="flex items-center gap-4 mb-2">
                 <span className="w-8 h-8 rounded-full bg-[#44743A] inline-block" />
                 <span className="font-semibold">Lars Vermeulen</span>
-                <span className="ml-auto text-gray-500">15 Mei, 2025</span>
+                <span className="ml-auto">15 Mei, 2025</span>
                 <span className="bg-green-500 text-white rounded-full px-3 py-1 text-xs">Positief</span>
               </div>
               <div className="text-black text-sm">
@@ -36,19 +36,19 @@ export default function FeedbackPage() {
             <div className="bg-white rounded-2xl p-4 mb-4 flex items-center gap-4">
               <span className="w-8 h-8 rounded-full bg-[#44743A] inline-block" />
               <span className="font-semibold">Lars Vermeulen</span>
-              <span className="ml-auto text-gray-500">15 Mei, 2025</span>
+              <span className="ml-auto">15 Mei, 2025</span>
               <span className="bg-red-500 text-white rounded-full px-3 py-1 text-xs">Negatief</span>
             </div>
             <div className="bg-white rounded-2xl p-4 mb-4 flex items-center gap-4">
               <span className="w-8 h-8 rounded-full bg-[#44743A] inline-block" />
               <span className="font-semibold">Lars Vermeulen</span>
-              <span className="ml-auto text-gray-500">15 Mei, 2025</span>
+              <span className="ml-auto">15 Mei, 2025</span>
               <span className="bg-yellow-500 text-white rounded-full px-3 py-1 text-xs">Neutraal</span>
             </div>
             <div className="bg-white rounded-2xl p-4 mb-4 flex items-center gap-4">
               <span className="w-8 h-8 rounded-full bg-[#44743A] inline-block" />
               <span className="font-semibold">Lars Vermeulen</span>
-              <span className="ml-auto text-gray-500">15 Mei, 2025</span>
+              <span className="ml-auto">15 Mei, 2025</span>
               <span className="bg-yellow-500 text-white rounded-full px-3 py-1 text-xs">Neutraal</span>
             </div>
           </div>

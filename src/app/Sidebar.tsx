@@ -34,11 +34,11 @@ const sidebarItems = [
 export default function Sidebar() {
   const pathname = usePathname();
   return (
-    <aside className="w-20 bg-[#44743A] rounded-tr-3xl rounded-br-3xl h-screen max-h-screen sticky top-0 flex flex-col items-center">
-      <div className="mb-12 mt-2">
+    <aside className="w-20 bg-[#44743A] h-screen max-h-screen sticky top-0 flex flex-col items-center">
+      <div className="mb-12 mt-6">
         {/* Logo als link naar home */}
         <Link href="/">
-          <Image src="/Logo.png" alt="Logo" width={48} height={48} priority />
+          <Image src="/Logo.png" alt="Logo" width={36} height={36} priority />
         </Link>
       </div>
       <nav className="flex flex-col gap-8 flex-1 justify-center">

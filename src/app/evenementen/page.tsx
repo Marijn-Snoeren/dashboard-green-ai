@@ -40,7 +40,7 @@ export default function EvenementenPage() {
                   <li key={i} className="flex items-center gap-2">
                     <svg width="24" height="24" fill="none" viewBox="0 0 24 24"><rect width="24" height="24" rx="6" fill="#44743A"/><path d="M8 12h8" stroke="#fff" strokeWidth="2" strokeLinecap="round"/></svg>
                     <span>{ev.name}</span>
-                    <span className="ml-auto text-gray-500 text-sm">{ev.date}</span>
+                    <span className="ml-auto text-sm">{ev.date}</span>
                   </li>
                 ))}
               </ul>
