@@ -1,41 +1,32 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import Image from "next/image";
 
 const sidebarItems = [
   {
     href: "/challenges",
-    icon: (
-      <svg width="28" height="28" fill="none" viewBox="0 0 28 28"><rect width="28" height="28" rx="8" fill="#fff"/><path d="M8 14h12M14 8v12" stroke="#44743A" strokeWidth="2.5" strokeLinecap="round"/></svg>
-    ),
+    icon: <Image src="/Challenges.png" alt="Challenges" width={28} height={28} priority />,
     label: "Challenges",
   },
   {
     href: "/statistieken",
-    icon: (
-      <svg width="28" height="28" fill="none" viewBox="0 0 28 28"><rect width="28" height="28" rx="8" fill="#fff"/><path d="M9 19V9m5 10V9m5 10V9" stroke="#44743A" strokeWidth="2.5" strokeLinecap="round"/></svg>
-    ),
+    icon: <Image src="/Stats.png" alt="Statistieken" width={28} height={28} priority />,
     label: "Statistieken",
   },
   {
     href: "/evenementen",
-    icon: (
-      <svg width="28" height="28" fill="none" viewBox="0 0 28 28"><rect width="28" height="28" rx="8" fill="#fff"/><rect x="8" y="10" width="12" height="10" rx="2" fill="#44743A"/><path d="M10 8v2m8-2v2" stroke="#44743A" strokeWidth="2.5" strokeLinecap="round"/></svg>
-    ),
+    icon: <Image src="/Events.png" alt="Evenementen" width={28} height={28} priority />,
     label: "Evenementen",
   },
   {
     href: "/sponsoren",
-    icon: (
-      <svg width="28" height="28" fill="none" viewBox="0 0 28 28"><rect width="28" height="28" rx="8" fill="#fff"/><path d="M14 8l5 8H9l5-8zm0 2.5L11.5 16h5L14 10.5z" fill="#44743A"/></svg>
-    ),
+    icon: <Image src="/Sponsors.png" alt="Sponsoren" width={28} height={28} priority />,
     label: "Sponsoren",
   },
   {
     href: "/feedback",
-    icon: (
-      <svg width="28" height="28" fill="none" viewBox="0 0 28 28"><rect width="28" height="28" rx="8" fill="#fff"/><path d="M10 12h8M10 16h5" stroke="#44743A" strokeWidth="2.5" strokeLinecap="round"/></svg>
-    ),
+    icon: <Image src="/Feedback.png" alt="Feedback" width={28} height={28} priority />,
     label: "Feedback",
   },
 ];
@@ -47,7 +38,7 @@ export default function Sidebar() {
       <div className="mb-12 mt-2">
         {/* Logo als link naar home */}
         <Link href="/">
-          <svg width="48" height="48" fill="none" viewBox="0 0 48 48"><path d="M24 8l8 14H16l8-14zm0 3.5L18.5 22h11L24 11.5z" fill="#fff"/></svg>
+          <Image src="/Logo.png" alt="Logo" width={48} height={48} priority />
         </Link>
       </div>
       <nav className="flex flex-col gap-8 flex-1 justify-center">
