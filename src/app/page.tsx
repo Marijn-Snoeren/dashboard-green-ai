@@ -1,4 +1,5 @@
 import React from "react";
+import Image from "next/image";
 
 export default function Home() {
   return (
@@ -86,7 +87,7 @@ export default function Home() {
               ].map((item, i) => (
                 <li key={i} className="flex items-center gap-3">
                   <span className="bg-[#44743A] rounded-lg p-2">
-                    <svg width="20" height="20" fill="none" viewBox="0 0 24 24"><rect width="20" height="20" rx="6" fill="#fff"/><path d="M6 12l4-4 4 4" stroke="#44743A" strokeWidth="2" strokeLinecap="round"/></svg>
+                    <Image src="/Wijk.png" alt="Wijk icoon" width={20} height={20} />
                   </span>
                   <span className="flex-1">{item.name}</span>
                   {item.up ? (
