@@ -15,7 +15,13 @@ export default function ChallengesPage() {
         <div className="flex gap-8">
           {/* Actieve Challenges */}
           <div className="flex-1">
-            <h2 className="text-xl font-medium mb-4">Actieve Challenges</h2>
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-medium">Actieve Challenges</h2>
+              <button className="flex items-center gap-1 text-black text-sm font-medium">
+                Create New
+                <span className="text-lg leading-none">+</span>
+              </button>
+            </div>
             <div className="grid grid-cols-2 gap-6">
               {/* Challenge cards */}
               {[{
@@ -34,19 +40,30 @@ export default function ChallengesPage() {
                 title: 'Stekjes Deel', desc: 'Deel een plantje of stekje met iemand in je buurt.', count: 27
               }, {
                 title: 'Afvalheld', desc: 'Scheid je afval deze week 100% correct.', count: 10
-              }].map((c, i) => (
-                <div key={i} className="rounded-2xl p-6 bg-[#44743A] text-white flex flex-col gap-2 min-h-[160px]">
-                  <span className="text-lg font-semibold">{c.title}</span>
-                  <span className="text-sm mb-2">{c.desc}</span>
-                  <span className="text-5xl font-bold leading-none">{c.count}</span>
-                  <span className="text-xs mt-2">Status: Actief<br />Aantal keren voltooid</span>
-                </div>
-              ))}
+              }].map((c, i) => {
+                let isGreen;
+                if (i === 0) {
+                  isGreen = true;
+                } else {
+                  isGreen = (Math.floor((i - 1) / 2) % 2) === 1;
+                }
+                return (
+                  <div
+                    key={i}
+                    className={`rounded-2xl p-6 min-h-[160px] flex flex-col gap-2 ${isGreen ? 'bg-[#44743A] text-white' : 'bg-white text-black'}`}
+                  >
+                    <span className="text-lg font-semibold">{c.title}</span>
+                    <span className="text-sm mb-2">{c.desc}</span>
+                    <span className="text-5xl font-bold leading-none">{c.count}</span>
+                    <span className="text-xs mt-2">Status: Actief<br />Aantal keren voltooid</span>
+                  </div>
+                );
+              })}
             </div>
           </div>
           {/* AI Challenges */}
-          <div className="w-[340px] flex flex-col gap-6">
-            <h2 className="text-xl font-medium mb-4">AI Challenges</h2>
+          <div className="w-[340px] bg-white rounded-2xl p-6 shadow flex flex-col gap-6">
+            <h2 className="text-xl font-medium text-black mb-2">AI Challenges</h2>
             {[{
               title: 'Restafval Reducer', desc: 'Jouw wijk produceert 12% meer restafval dan gemiddeld. Daag jezelf uit om deze week afval beter te scheiden.'
             }, {
@@ -58,12 +75,12 @@ export default function ChallengesPage() {
             }, {
               title: 'Recycle Reminder', desc: 'Vorige maand werd plastic in jouw wijk 30% minder gescheiden. Zet vandaag je plasticzak buiten of help je buren herinneren.'
             }].map((ai, i) => (
-              <div key={i} className="rounded-2xl p-6 bg-[#44743A] text-white flex flex-col gap-2">
+              <div key={i} className="rounded-2xl p-4 bg-[#44743A] text-white flex flex-col gap-2">
                 <span className="text-lg font-semibold">{ai.title}</span>
                 <span className="text-sm mb-2">{ai.desc}</span>
                 <div className="flex gap-4 mt-2">
-                  <button className="flex items-center gap-1 text-xs"><span className="text-white">Accepteer</span></button>
-                  <button className="flex items-center gap-1 text-xs"><span className="text-white">✗ Afkeuren</span></button>
+                  <button className="flex items-center gap-1 text-xs border border-white text-white rounded px-3 py-1"><span>Accepteer</span></button>
+                  <button className="flex items-center gap-1 text-xs border border-white text-white rounded px-3 py-1"><span>Afkeuren</span></button>
                 </div>
               </div>
             ))}

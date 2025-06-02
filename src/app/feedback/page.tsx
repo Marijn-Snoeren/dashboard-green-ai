@@ -30,7 +30,10 @@ export default function FeedbackPage() {
               </div>
               <div className="text-black text-sm">
                 Bericht<br />
-                <span className="text-xs">Proident exercitation ad et nostrud tempor qui non dolore est velit. ...</span>
+                <span className="text-xs">Occaecat aliquip esse fugiat cillum sunt. Enim quis officia labore veniam do ex ut irure. Officia aute velit ex voluptate nulla. Cupidatat exercitation ad velit proident excepteur irure magna sint ad eiusmod esse. Id id sint in. Nulla exercitation consequat magna nisi et duis mollit irure minim adipisicing ipsum. Consectetur amet ex veniam dolore excepteur pariatur cillum est amet irure occaecat voluptate cillum.</span>
+                <br/>
+                <br/>
+                <span className="text-xs">Occaecat aliquip esse fugiat cillum sunt. Enim quis officia labore veniam do ex ut irure. Officia aute velit ex voluptate nulla. Cupidatat exercitation ad velit proident excepteur irure magna sint ad eiusmod esse. Id id sint in. Nulla exercitation consequat magna nisi et duis mollit irure minim adipisicing ipsum. Consectetur amet ex veniam dolore excepteur pariatur cillum est amet irure occaecat voluptate cillum.</span>
               </div>
             </div>
             <div className="bg-white rounded-2xl p-4 mb-4 flex items-center gap-4">
