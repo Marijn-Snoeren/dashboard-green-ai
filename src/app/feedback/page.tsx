@@ -72,7 +72,7 @@ export default function FeedbackPage() {
         <h2 className="text-xl font-medium mb-4">Gebruikersfeedback</h2>
         <div className="flex gap-8">
           {/* Feedback lijst */}
-          <div className="bg-[#44743A] rounded-3xl flex-1 p-6">
+          <div className="bg-[#44743A] rounded-3xl flex-[3] p-6 h-fit">
             {feedbackItems.map((item, index) => (
               <div 
                 key={index}
@@ -96,14 +96,14 @@ export default function FeedbackPage() {
             ))}
           </div>
           {/* Feedback stats */}
-          <div className="flex flex-col gap-6 w-[340px]">
+          <div className="flex flex-col gap-6 flex-[2]">
             <div className="bg-white rounded-2xl p-6 flex items-center gap-6">
               <div>
                 <span className="font-semibold">Positieve Feedback</span><br />
                 <span className="text-xs">Hoeveelheid positieve feedback van gebruikers deze week.</span>
               </div>
               <div className="ml-auto flex items-center justify-center">
-                <span className="w-20 h-20 rounded-full border-8 border-green-700 flex items-center justify-center text-3xl font-bold text-green-700">88</span>
+                <span className="w-30 h-30 rounded-full border-12 border-green-700 flex items-center justify-center text-4xl font-bold text-green-700">88</span>
               </div>
             </div>
             <div className="bg-white rounded-2xl p-6 flex items-center gap-6">
@@ -112,7 +112,7 @@ export default function FeedbackPage() {
                 <span className="text-xs">Hoeveelheid neutrale feedback van gebruikers deze week.</span>
               </div>
               <div className="ml-auto flex items-center justify-center">
-                <span className="w-20 h-20 rounded-full border-8 border-yellow-500 flex items-center justify-center text-3xl font-bold text-yellow-500">47</span>
+                <span className="w-30 h-30 rounded-full border-12 border-yellow-500 flex items-center justify-center text-4xl font-bold text-yellow-500">47</span>
               </div>
             </div>
             <div className="bg-white rounded-2xl p-6 flex items-center gap-6">
@@ -121,7 +121,7 @@ export default function FeedbackPage() {
                 <span className="text-xs">Hoeveelheid negatieve feedback van gebruikers deze week.</span>
               </div>
               <div className="ml-auto flex items-center justify-center">
-                <span className="w-20 h-20 rounded-full border-8 border-red-700 flex items-center justify-center text-3xl font-bold text-red-700">23</span>
+                <span className="w-30 h-30 rounded-full border-12 border-red-700 flex items-center justify-center text-4xl font-bold text-red-700">23</span>
               </div>
             </div>
           </div>
