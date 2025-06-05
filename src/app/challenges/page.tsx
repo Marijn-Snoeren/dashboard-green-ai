@@ -1,9 +1,64 @@
-import React from "react";
+"use client";
+
+import React, { useState } from "react";
+import { useChallenges, useAIChallenges } from "@/hooks/useChallenges";
+import { SeedDatabase } from "@/components/SeedDatabase";
 
 export default function ChallengesPage() {
+  const {
+    challenges,
+    loading: challengesLoading,
+    error: challengesError,
+  } = useChallenges();
+  const {
+    aiChallenges,
+    loading: aiLoading,
+    error: aiError,
+    acceptChallenge,
+    denyChallenge,
+  } = useAIChallenges();
+
+  const [actionLoading, setActionLoading] = useState<string | null>(null);
+
+  const handleAcceptChallenge = async (aiChallenge: any) => {
+    setActionLoading(`accept-${aiChallenge.id}`);
+    try {
+      await acceptChallenge(aiChallenge);
+    } catch (error) {
+      console.error("Error accepting challenge:", error);
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
+  const handleDenyChallenge = async (aiChallengeId: string) => {
+    setActionLoading(`deny-${aiChallengeId}`);
+    try {
+      await denyChallenge(aiChallengeId);
+    } catch (error) {
+      console.error("Error denying challenge:", error);
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
+  if (challengesLoading || aiLoading) {
+    return (
+      <div className="flex min-h-screen bg-[#F6F6F6] min-w-[1200px]">
+        <main className="flex-1 p-12">
+          <div className="flex justify-center items-center h-64">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#44743A] mx-auto"></div>
+              <p className="mt-4 text-gray-600">Challenges laden...</p>
+            </div>
+          </div>
+        </main>
+      </div>
+    );
+  }
+
   return (
     <div className="flex min-h-screen bg-[#F6F6F6] min-w-[1200px]">
-      {/* Sidebar (leeg, want layout.tsx zal de echte sidebar bevatten) */}
       <main className="flex-1 p-12">
         <div className="flex justify-between items-start mb-8">
           <h1 className="text-black text-3xl font-bold">Challenges</h1>
@@ -12,81 +67,141 @@ export default function ChallengesPage() {
             <span className="w-8 h-8 rounded-full bg-gray-300 inline-block" />
           </div>
         </div>
+
+        <SeedDatabase />
+
+        {challengesError && (
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+            Error loading challenges: {challengesError}
+          </div>
+        )}
+
+        {aiError && (
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+            Error loading AI challenges: {aiError}
+          </div>
+        )}
+
         <div className="flex gap-8">
           {/* Actieve Challenges */}
           <div className="flex-1">
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-medium">Actieve Challenges</h2>
-              <button className="flex items-center gap-1 text-black text-sm font-medium">
+              <h2 className="text-xl font-medium">
+                Actieve Challenges ({challenges.length})
+              </h2>
+              <button className="flex items-center gap-1 text-black text-sm font-medium hover:bg-gray-100 px-3 py-2 rounded transition-colors">
                 Create New
                 <span className="text-lg leading-none">+</span>
               </button>
             </div>
-            <div className="grid grid-cols-2 gap-6">
-              {/* Challenge cards */}
-              {[{
-                title: 'Bespaar Water', desc: 'Zet de kraan uit tijdens het tandenpoetsen.', count: 10
-              }, {
-                title: 'Stoep Veger', desc: 'Houd jouw straat schoon en bladvrij.', count: 27
-              }, {
-                title: 'Douche Tekort', desc: 'Douche maximaal 5 minuten per dag, een week lang.', count: 27
-              }, {
-                title: 'Draag Groener', desc: 'Trek drie dagen op rij tweedehands of duurzame kleding aan.', count: 10
-              }, {
-                title: 'Plastic Skip', desc: 'Gebruik deze week geen wegwerpplastic.', count: 10
-              }, {
-                title: 'Wandelen Maar', desc: 'Laat de auto staan en doe drie korte ritjes te voet.', count: 27
-              }, {
-                title: 'Stekjes Deel', desc: 'Deel een plantje of stekje met iemand in je buurt.', count: 27
-              }, {
-                title: 'Afvalheld', desc: 'Scheid je afval deze week 100% correct.', count: 10
-              }].map((c, i) => {
-                let isGreen;
-                if (i === 0) {
-                  isGreen = true;
-                } else {
-                  isGreen = (Math.floor((i - 1) / 2) % 2) === 1;
-                }
-                return (
-                  <div
-                    key={i}
-                    className={`rounded-2xl p-6 min-h-[160px] flex flex-col gap-2 ${isGreen ? 'bg-[#44743A] text-white' : 'bg-white text-black'}`}
-                  >
-                    <span className="text-lg font-semibold">{c.title}</span>
-                    <span className="text-sm mb-2">{c.desc}</span>
-                    <span className="text-5xl font-bold leading-none">{c.count}</span>
-                    <span className="text-xs mt-2">Status: Actief<br />Aantal keren voltooid</span>
-                  </div>
-                );
-              })}
-            </div>
+
+            {challenges.length === 0 ? (
+              <div className="bg-white rounded-2xl p-8 text-center">
+                <p className="text-gray-500">
+                  Geen actieve challenges gevonden.
+                </p>
+                <p className="text-sm text-gray-400 mt-2">
+                  Accepteer AI suggestions om challenges toe te voegen.
+                </p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 gap-6">
+                {challenges.map((challenge, i) => {
+                  const isGreen = i % 3 === 0;
+                  return (
+                    <div
+                      key={challenge.id}
+                      className={`rounded-2xl p-6 min-h-[160px] flex flex-col gap-2 transition-all hover:shadow-lg ${
+                        isGreen
+                          ? "bg-[#44743A] text-white"
+                          : "bg-white text-black border border-gray-200"
+                      }`}
+                    >
+                      <span className="text-lg font-semibold">
+                        {challenge.title}
+                      </span>
+                      <span className="text-sm mb-2">
+                        {challenge.description}
+                      </span>
+                      <span className="text-5xl font-bold leading-none">
+                        {challenge.completionCount}
+                      </span>
+                      <span className="text-xs mt-2">
+                        Status:{" "}
+                        {challenge.status === "active" ? "Actief" : "Inactief"}
+                        <br />
+                        Aantal keren voltooid
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
           </div>
+
           {/* AI Challenges */}
           <div className="w-[340px] bg-white rounded-2xl p-6 shadow flex flex-col gap-6">
-            <h2 className="text-xl font-medium text-black mb-2">AI Challenges</h2>
-            {[{
-              title: 'Restafval Reducer', desc: 'Jouw wijk produceert 12% meer restafval dan gemiddeld. Daag jezelf uit om deze week afval beter te scheiden.'
-            }, {
-              title: 'Stille Straat Loop', desc: 'In de Pastoorstraat is deze maand nauwelijks bewogen. Ga vandaag 1 km wandelen in je straat.'
-            }, {
-              title: 'Laag Licht Verbruik', desc: 'In jouw buurt relatief veel energieverbruik na 22:00. Probeer vanavond alle lampen uit te doen vóór je naar bed gaat.'
-            }, {
-              title: 'Buurboom Bonus', desc: 'Er zijn nog 4 dode/gedroogde boomspiegels open in jouw wijk. Kies er één en maak hem groen!'
-            }, {
-              title: 'Recycle Reminder', desc: 'Vorige maand werd plastic in jouw wijk 30% minder gescheiden. Zet vandaag je plasticzak buiten of help je buren herinneren.'
-            }].map((ai, i) => (
-              <div key={i} className="rounded-2xl p-4 bg-[#44743A] text-white flex flex-col gap-2">
-                <span className="text-lg font-semibold">{ai.title}</span>
-                <span className="text-sm mb-2">{ai.desc}</span>
-                <div className="flex gap-4 mt-2">
-                  <button className="flex items-center gap-1 text-xs border border-white text-white rounded px-3 py-1"><span>Accepteer</span></button>
-                  <button className="flex items-center gap-1 text-xs border border-white text-white rounded px-3 py-1"><span>Afkeuren</span></button>
-                </div>
+            <h2 className="text-xl font-medium text-black mb-2">
+              AI Challenges ({aiChallenges.length})
+            </h2>
+
+            {aiChallenges.length === 0 ? (
+              <div className="text-center py-8">
+                <p className="text-gray-500">
+                  Geen AI suggestions beschikbaar.
+                </p>
+                <p className="text-sm text-gray-400 mt-2">
+                  Nieuwe suggestions worden automatisch gegenereerd.
+                </p>
               </div>
-            ))}
+            ) : (
+              aiChallenges.map((aiChallenge) => (
+                <div
+                  key={aiChallenge.id}
+                  className="rounded-2xl p-4 bg-[#44743A] text-white flex flex-col gap-2 transition-all hover:bg-[#3a6330]"
+                >
+                  <span className="text-lg font-semibold">
+                    {aiChallenge.title}
+                  </span>
+                  <span className="text-sm mb-2">
+                    {aiChallenge.description}
+                  </span>
+                  <div className="flex gap-2 mt-2">
+                    <button
+                      onClick={() => handleAcceptChallenge(aiChallenge)}
+                      disabled={actionLoading === `accept-${aiChallenge.id}`}
+                      className="flex items-center gap-1 text-xs border border-white text-white rounded px-3 py-1 hover:bg-white hover:text-[#44743A] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {actionLoading === `accept-${aiChallenge.id}` ? (
+                        <>
+                          <div className="animate-spin rounded-full h-3 w-3 border-b border-current"></div>
+                          <span>Accepteren...</span>
+                        </>
+                      ) : (
+                        <span>Accepteer</span>
+                      )}
+                    </button>
+                    <button
+                      onClick={() => handleDenyChallenge(aiChallenge.id)}
+                      disabled={actionLoading === `deny-${aiChallenge.id}`}
+                      className="flex items-center gap-1 text-xs border border-white text-white rounded px-3 py-1 hover:bg-red-500 hover:border-red-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {actionLoading === `deny-${aiChallenge.id}` ? (
+                        <>
+                          <div className="animate-spin rounded-full h-3 w-3 border-b border-current"></div>
+                          <span>Afkeuren...</span>
+                        </>
+                      ) : (
+                        <span>Afkeuren</span>
+                      )}
+                    </button>
+                  </div>
+                </div>
+              ))
+            )}
           </div>
         </div>
       </main>
     </div>
   );
-} 
+}
