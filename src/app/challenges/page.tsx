@@ -2,7 +2,9 @@
 
 import React, { useState } from "react";
 import { useChallenges, useAIChallenges } from "@/hooks/useChallenges";
-import { SeedDatabase } from "@/components/SeedDatabase";
+import { createChallenges, GeneratedChallenge } from "@/lib/api";
+import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+import { db } from "@/lib/firebase";
 
 export default function ChallengesPage() {
   const {
@@ -19,6 +21,20 @@ export default function ChallengesPage() {
   } = useAIChallenges();
 
   const [actionLoading, setActionLoading] = useState<string | null>(null);
+  const [reloadLoading, setReloadLoading] = useState(false);
+  const [reloadError, setReloadError] = useState<string | null>(null);
+
+  const validateChallenge = (
+    challenge: any
+  ): challenge is GeneratedChallenge => {
+    return (
+      challenge &&
+      typeof challenge.title === "string" &&
+      challenge.title.trim() !== "" &&
+      typeof challenge.description === "string" &&
+      challenge.description.trim() !== ""
+    );
+  };
 
   const handleAcceptChallenge = async (aiChallenge: any) => {
     setActionLoading(`accept-${aiChallenge.id}`);
@@ -39,6 +55,51 @@ export default function ChallengesPage() {
       console.error("Error denying challenge:", error);
     } finally {
       setActionLoading(null);
+    }
+  };
+
+  const handleReloadChallenges = async () => {
+    setReloadLoading(true);
+    setReloadError(null);
+
+    try {
+      // Generate 3 new challenges
+      const newChallenges = await createChallenges(3);
+
+      if (Array.isArray(newChallenges)) {
+        const validChallenges = newChallenges.filter(validateChallenge);
+
+        // Add each valid challenge to Firestore
+        for (const challenge of validChallenges) {
+          await addDoc(collection(db, "ai-challenges"), {
+            title: challenge.title.trim(),
+            description: challenge.description.trim(),
+            category: challenge.category?.trim() || "ai-generated",
+            createdAt: serverTimestamp(),
+          });
+        }
+
+        if (validChallenges.length === 0) {
+          setReloadError("Geen geldige challenges gegenereerd");
+        }
+      } else {
+        setReloadError("Ongeldige response van de API");
+      }
+    } catch (error) {
+      console.error("Error reloading challenges:", error);
+      if (error instanceof Error) {
+        if (error.message.includes("Gemini failed")) {
+          setReloadError("AI service tijdelijk niet beschikbaar");
+        } else if (error.message.includes("HTTP")) {
+          setReloadError("Netwerk fout bij het laden van nieuwe challenges");
+        } else {
+          setReloadError("Fout bij het genereren van nieuwe challenges");
+        }
+      } else {
+        setReloadError("Onbekende fout opgetreden");
+      }
+    } finally {
+      setReloadLoading(false);
     }
   };
 
@@ -68,8 +129,6 @@ export default function ChallengesPage() {
           </div>
         </div>
 
-        <SeedDatabase />
-
         {challengesError && (
           <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
             Error loading challenges: {challengesError}
@@ -79,6 +138,12 @@ export default function ChallengesPage() {
         {aiError && (
           <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
             Error loading AI challenges: {aiError}
+          </div>
+        )}
+
+        {reloadError && (
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+            {reloadError}
           </div>
         )}
 
@@ -141,9 +206,29 @@ export default function ChallengesPage() {
 
           {/* AI Challenges */}
           <div className="w-[340px] bg-white rounded-2xl p-6 shadow flex flex-col gap-6">
-            <h2 className="text-xl font-medium text-black mb-2">
-              AI Challenges ({aiChallenges.length})
-            </h2>
+            <div className="flex items-center justify-between">
+              <h2 className="text-xl font-medium text-black">
+                AI Challenges ({aiChallenges.length})
+              </h2>
+              <button
+                onClick={handleReloadChallenges}
+                disabled={reloadLoading}
+                className="flex items-center gap-1 bg-[#44743A] text-white px-3 py-2 rounded-md hover:bg-[#3a6330] disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm"
+                title="Genereer nieuwe AI challenges"
+              >
+                {reloadLoading ? (
+                  <>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b border-white"></div>
+                    <span>...</span>
+                  </>
+                ) : (
+                  <>
+                    <span>🔄</span>
+                    <span>Reload</span>
+                  </>
+                )}
+              </button>
+            </div>
 
             {aiChallenges.length === 0 ? (
               <div className="text-center py-8">
@@ -151,7 +236,7 @@ export default function ChallengesPage() {
                   Geen AI suggestions beschikbaar.
                 </p>
                 <p className="text-sm text-gray-400 mt-2">
-                  Nieuwe suggestions worden automatisch gegenereerd.
+                  Klik op "Reload" om nieuwe challenges te genereren.
                 </p>
               </div>
             ) : (
