@@ -7,6 +7,9 @@ import {
   where,
   addDoc,
   serverTimestamp,
+  setDoc,
+  doc,
+  deleteDoc,
 } from "firebase/firestore";
 
 // Static QR codes that are always available
@@ -63,6 +66,8 @@ interface QRCode {
   points: number;
   type: "static" | "dynamic";
   challengeIds: string[];
+  createdAt?: any;
+  updatedAt?: any;
 }
 
 // Extract plant name from challenge description based on keywords
@@ -74,7 +79,7 @@ function extractPlantName(description: string, title: string): string {
     normalizedDesc.includes("wildebloemen") ||
     normalizedDesc.includes("wildebloem")
   ) {
-    return "Wilde bloemen mix";
+    return "Wilde bloemen";
   }
   if (
     normalizedDesc.includes("zonnebloemen") ||
@@ -95,16 +100,16 @@ function extractPlantName(description: string, title: string): string {
     return "Korenbloemen";
   }
   if (normalizedDesc.includes("lavendel")) {
-    return "Lavendel starter pack";
+    return "Lavendel";
   }
   if (normalizedDesc.includes("bijenvriendelijk")) {
     return "Bijenvriendelijke planten";
   }
   if (normalizedDesc.includes("schaduw")) {
-    return "Schaduw tolerante planten";
+    return "Schaduwplanten";
   }
   if (normalizedDesc.includes("boom") || normalizedDesc.includes("bomen")) {
-    return "Boom plantactie";
+    return "Bomen";
   }
 
   // Additional plant types
@@ -208,7 +213,7 @@ function extractPlantName(description: string, title: string): string {
     normalizedDesc.includes("kruidenmix") ||
     normalizedDesc.includes("kruiden")
   ) {
-    return "Kruiden mix";
+    return "Kruiden";
   }
 
   // If no match found, use the challenge title
@@ -222,6 +227,96 @@ function generateQRCodeIdentifier(plantName: string): string {
     .replace(/\s+/g, "_")
     .replace(/[^a-z0-9_]/g, "")
     .toUpperCase();
+}
+
+// Save/update dynamic QR codes in Firestore
+async function saveDynamicQRCodesToFirestore(qrCodes: QRCode[]): Promise<void> {
+  try {
+    // First, get existing dynamic QR codes to see what needs to be updated/deleted
+    const dynamicQRCodesRef = collection(db, "dynamic-qr-codes");
+    const existingSnapshot = await getDocs(dynamicQRCodesRef);
+
+    const existingCodes = new Map<string, string>(); // code -> docId
+    existingSnapshot.forEach((doc) => {
+      const data = doc.data();
+      existingCodes.set(data.code, doc.id);
+    });
+
+    // Save or update each QR code
+    for (const qrCode of qrCodes) {
+      const existingDocId = existingCodes.get(qrCode.code);
+
+      if (existingDocId) {
+        // Update existing QR code
+        await setDoc(
+          doc(db, "dynamic-qr-codes", existingDocId),
+          {
+            code: qrCode.code,
+            name: qrCode.name,
+            description: qrCode.description,
+            points: qrCode.points,
+            type: qrCode.type,
+            challengeIds: qrCode.challengeIds,
+            updatedAt: serverTimestamp(),
+          },
+          { merge: true }
+        );
+
+        // Remove from existingCodes so we know it's been processed
+        existingCodes.delete(qrCode.code);
+      } else {
+        // Create new QR code
+        await addDoc(dynamicQRCodesRef, {
+          code: qrCode.code,
+          name: qrCode.name,
+          description: qrCode.description,
+          points: qrCode.points,
+          type: qrCode.type,
+          challengeIds: qrCode.challengeIds,
+          createdAt: serverTimestamp(),
+          updatedAt: serverTimestamp(),
+        });
+      }
+    }
+
+    // Delete QR codes that are no longer needed (challenges deleted)
+    for (const [code, docId] of existingCodes) {
+      await deleteDoc(doc(db, "dynamic-qr-codes", docId));
+      console.log(`Deleted orphaned dynamic QR code: ${code}`);
+    }
+  } catch (error) {
+    console.error("Error saving dynamic QR codes to Firestore:", error);
+    throw error;
+  }
+}
+
+// Fetch dynamic QR codes from Firestore
+async function getDynamicQRCodes(): Promise<QRCode[]> {
+  try {
+    const qrCodesRef = collection(db, "dynamic-qr-codes");
+    const snapshot = await getDocs(qrCodesRef);
+
+    const dynamicQRCodes: QRCode[] = [];
+    snapshot.forEach((doc) => {
+      const data = doc.data();
+      dynamicQRCodes.push({
+        id: doc.id,
+        code: data.code,
+        name: data.name,
+        description: data.description,
+        points: data.points || 50,
+        type: "dynamic",
+        challengeIds: data.challengeIds || [],
+        createdAt: data.createdAt,
+        updatedAt: data.updatedAt,
+      });
+    });
+
+    return dynamicQRCodes;
+  } catch (error) {
+    console.error("Error fetching dynamic QR codes:", error);
+    return [];
+  }
 }
 
 // Group challenges by plant type and create shared QR codes
@@ -289,6 +384,8 @@ async function getCustomStaticQRCodes(): Promise<QRCode[]> {
         points: data.points || 50,
         type: "static",
         challengeIds: [],
+        createdAt: data.createdAt,
+        updatedAt: data.updatedAt,
       });
     });
 
@@ -296,6 +393,68 @@ async function getCustomStaticQRCodes(): Promise<QRCode[]> {
   } catch (error) {
     console.error("Error fetching custom static QR codes:", error);
     return [];
+  }
+}
+
+// Initialize default static QR codes in Firestore if they don't exist
+async function initializeDefaultStaticQRCodes(): Promise<void> {
+  try {
+    const staticQRCodesRef = collection(db, "default-static-qr-codes");
+    const snapshot = await getDocs(staticQRCodesRef);
+
+    // If collection is empty, initialize with default codes
+    if (snapshot.empty) {
+      console.log("Initializing default static QR codes in Firestore...");
+
+      for (const qrCode of STATIC_QR_CODES) {
+        await addDoc(staticQRCodesRef, {
+          code: qrCode.code,
+          name: qrCode.name,
+          description: qrCode.description,
+          points: qrCode.points,
+          type: qrCode.type,
+          createdAt: serverTimestamp(),
+          updatedAt: serverTimestamp(),
+        });
+      }
+
+      console.log("Default static QR codes initialized successfully");
+    }
+  } catch (error) {
+    console.error("Error initializing default static QR codes:", error);
+  }
+}
+
+// Fetch default static QR codes from Firestore
+async function getDefaultStaticQRCodes(): Promise<QRCode[]> {
+  try {
+    const qrCodesRef = collection(db, "default-static-qr-codes");
+    const snapshot = await getDocs(qrCodesRef);
+
+    const defaultQRCodes: QRCode[] = [];
+    snapshot.forEach((doc) => {
+      const data = doc.data();
+      defaultQRCodes.push({
+        id: doc.id,
+        code: data.code,
+        name: data.name,
+        description: data.description,
+        points: data.points || 50,
+        type: "static",
+        challengeIds: [],
+        createdAt: data.createdAt,
+        updatedAt: data.updatedAt,
+      });
+    });
+
+    return defaultQRCodes;
+  } catch (error) {
+    console.error("Error fetching default static QR codes:", error);
+    // Fallback to hardcoded static codes
+    return STATIC_QR_CODES.map((qr) => ({
+      ...qr,
+      challengeIds: [],
+    }));
   }
 }
 
@@ -325,6 +484,9 @@ function generateUniqueStaticCode(
 
 export async function GET() {
   try {
+    // Initialize default static QR codes if needed
+    await initializeDefaultStaticQRCodes();
+
     // Fetch active challenges from Firestore
     const challengesRef = collection(db, "challenges");
     const activeQuery = query(challengesRef, where("status", "==", "active"));
@@ -345,16 +507,15 @@ export async function GET() {
     });
 
     // Generate grouped QR codes based on plant types
-    const dynamicQRCodes = generateGroupedQRCodes(challenges);
+    const generatedDynamicQRCodes = generateGroupedQRCodes(challenges);
 
-    // Get custom static QR codes from Firestore
+    // Save/update dynamic QR codes in Firestore
+    await saveDynamicQRCodesToFirestore(generatedDynamicQRCodes);
+
+    // Fetch all QR codes from Firestore
+    const dynamicQRCodes = await getDynamicQRCodes();
     const customStaticQRCodes = await getCustomStaticQRCodes();
-
-    // Convert default static QR codes to match new format
-    const defaultStaticQRCodes: QRCode[] = STATIC_QR_CODES.map((qr) => ({
-      ...qr,
-      challengeIds: [], // Static codes don't belong to specific challenges
-    }));
+    const defaultStaticQRCodes = await getDefaultStaticQRCodes();
 
     // Combine all QR codes
     const allStaticQRCodes = [...defaultStaticQRCodes, ...customStaticQRCodes];
@@ -385,7 +546,7 @@ export async function GET() {
     return NextResponse.json(
       {
         success: false,
-        error: "Failed to fetch challenges from Firestore",
+        error: "Failed to fetch QR codes from Firestore",
         data: {
           qrCodes: staticQRCodes,
           metadata: {
@@ -425,11 +586,16 @@ export async function POST(request: Request) {
     const existingCodes: string[] = [];
 
     // Add default static codes
-    STATIC_QR_CODES.forEach((qr) => existingCodes.push(qr.code));
+    const defaultStaticQRCodes = await getDefaultStaticQRCodes();
+    defaultStaticQRCodes.forEach((qr) => existingCodes.push(qr.code));
 
     // Add custom static codes
     const customQRCodes = await getCustomStaticQRCodes();
     customQRCodes.forEach((qr) => existingCodes.push(qr.code));
+
+    // Add dynamic codes
+    const dynamicQRCodes = await getDynamicQRCodes();
+    dynamicQRCodes.forEach((qr) => existingCodes.push(qr.code));
 
     // Generate unique code
     const newCode = generateUniqueStaticCode(existingCodes, name);
@@ -442,6 +608,7 @@ export async function POST(request: Request) {
       description: description.trim(),
       points: points,
       createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp(),
     });
 
     return NextResponse.json({
