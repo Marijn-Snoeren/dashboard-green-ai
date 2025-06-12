@@ -363,7 +363,7 @@ export default function ChallengesPage() {
               <div className="text-2xl font-bold text-purple-600">
                 {qrData.metadata.dynamic}
               </div>
-              <div className="text-sm text-gray-600">Van challenges</div>
+              <div className="text-sm text-gray-600">AI challenges</div>
             </div>
             <div className="bg-white rounded-lg p-4 shadow border-l-4 border-l-green-500">
               <div className="text-2xl font-bold text-green-600">
